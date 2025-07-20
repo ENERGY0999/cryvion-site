@@ -4,11 +4,12 @@ import Hero from './components/Hero';
 import About from './components/About';
 import Services from './components/Services';
 import Projects from './components/Projects';
-import ContactForm from './components/ContactForm';  // <-- Import contact form
+import Contact from './components/Contact';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
 import ScrollProgress from './components/ScrollProgress';
 import { ParallaxProvider } from 'react-scroll-parallax';
+import { Toaster } from 'react-hot-toast';
 
 export default function App() {
   return (
@@ -22,10 +23,12 @@ export default function App() {
           <About />
           <Services />
           <Projects />
-          <ContactForm /> {/* Added contact form section */}
+          <Contact />
         </main>
         <Footer />
       </ParallaxProvider>
+      <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
     </div>
   );
 }
+

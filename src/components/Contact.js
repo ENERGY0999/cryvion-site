@@ -1,15 +1,14 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import emailjs from 'emailjs-com';
-import ReCAPTCHA from 'react-google-recaptcha';
+import { toast, Toaster } from 'react-hot-toast';
+import { FaUser, FaEnvelope, FaCommentDots } from 'react-icons/fa';
 
 export default function Contact() {
-  const [status, setStatus] = useState('');
-  const recaptchaRef = useRef(null);
+  const [loading, setLoading] = useState(false);
 
-  const sendEmail = async (e) => {
+  const sendEmail = (e) => {
     e.preventDefault();
-
     const form = e.target;
     const honeypot = form.honeypot.value;
 
@@ -18,36 +17,25 @@ export default function Contact() {
       return;
     }
 
-    // Get reCAPTCHA token
-    const token = await recaptchaRef.current.executeAsync();
-    recaptchaRef.current.reset();
-
-    if (!token) {
-      setStatus('Please complete the reCAPTCHA challenge.');
-      return;
-    }
-
-    // Append the token to form data
-    const formData = new FormData(form);
-    formData.append('g-recaptcha-response', token);
+    setLoading(true);
 
     emailjs
       .sendForm(
-        'service_y7oqpj6',
-        'template_g82st2k',
+        'YOUR_SERVICE_ID',
+        'YOUR_TEMPLATE_ID',
         form,
-        'T_VtCzyoxOW3PJseS'
+        'YOUR_PUBLIC_KEY'
       )
-      .then(
-        () => {
-          setStatus('Message sent! I will get back to you soon.');
-          form.reset();
-        },
-        (error) => {
-          console.error(error.text);
-          setStatus('Something went wrong. Please try again.');
-        }
-      );
+      .then(() => {
+        toast.success('Message sent! I will get back to you soon.');
+        form.reset();
+      })
+      .catch(() => {
+        toast.error('Something went wrong. Please try again.');
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   return (
@@ -55,90 +43,78 @@ export default function Contact() {
       id="contact"
       className="bg-bgPrimary text-textPrimary py-20 px-6 sm:px-12 md:px-24 min-h-screen flex flex-col items-center justify-center"
     >
-      <h2 className="font-orbitron text-5xl font-extrabold mb-8 text-neonBlue drop-shadow-neon-blue text-center">
-        Contact Us
-      </h2>
+      <Toaster position="top-right" reverseOrder={false} />
 
-      <form onSubmit={sendEmail} className="space-y-6 max-w-lg w-full" noValidate>
-        {/* Honeypot Field */}
-        <div className="hidden">
-          <label htmlFor="honeypot">Leave this empty</label>
-          <input type="text" id="honeypot" name="honeypot" autoComplete="off" />
-        </div>
+      <motion.div
+        className="bg-glassBg backdrop-blur-xs border border-glassBorder rounded-3xl p-12 shadow-neon-violet max-w-2xl w-full"
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8, ease: 'easeOut' }}
+      >
+        <h2 className="font-orbitron text-5xl font-extrabold mb-10 text-neonBlue drop-shadow-neon-blue text-center">
+          Contact Us
+        </h2>
 
-        <div>
-          <label htmlFor="name" className="block mb-2">
-            Name
-          </label>
-          <input
-            required
-            type="text"
-            name="name"
-            id="name"
-            className="w-full px-4 py-3 rounded-lg bg-glassBg border border-glassBorder focus:outline-none focus:ring-2 focus:ring-neonBlue transition"
-          />
-        </div>
+        <form onSubmit={sendEmail} className="space-y-10">
+          <div className="hidden">
+            <input type="text" name="honeypot" />
+          </div>
 
-        <div>
-          <label htmlFor="email" className="block mb-2">
-            Email
-          </label>
-          <input
-            required
-            type="email"
-            name="email"
-            id="email"
-            className="w-full px-4 py-3 rounded-lg bg-glassBg border border-glassBorder focus:outline-none focus:ring-2 focus:ring-neonBlue transition"
-          />
-        </div>
+          {/* Input Group */}
+          <div className="relative">
+            <FaUser className="absolute top-1/2 left-4 transform -translate-y-1/2 text-neonBlue" />
+            <input
+              required
+              type="text"
+              name="name"
+              className="peer w-full pl-12 pr-4 py-4 bg-transparent border-b-2 border-textPrimary/30 focus:border-neonBlue outline-none text-lg transition-all"
+              placeholder=" "
+            />
+            <label className="absolute left-12 top-4 text-textPrimary/70 text-lg pointer-events-none transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-lg peer-focus:top-[-10px] peer-focus:text-sm peer-focus:text-neonBlue">
+              Name
+            </label>
+          </div>
 
-        <div>
-          <label htmlFor="message" className="block mb-2">
-            Message
-          </label>
-          <textarea
-            required
-            name="message"
-            id="message"
-            rows="5"
-            className="w-full px-4 py-3 rounded-lg bg-glassBg border border-glassBorder focus:outline-none focus:ring-2 focus:ring-neonBlue transition"
-          ></textarea>
-        </div>
+          <div className="relative">
+            <FaEnvelope className="absolute top-1/2 left-4 transform -translate-y-1/2 text-neonBlue" />
+            <input
+              required
+              type="email"
+              name="email"
+              className="peer w-full pl-12 pr-4 py-4 bg-transparent border-b-2 border-textPrimary/30 focus:border-neonBlue outline-none text-lg transition-all"
+              placeholder=" "
+            />
+            <label className="absolute left-12 top-4 text-textPrimary/70 text-lg pointer-events-none transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-lg peer-focus:top-[-10px] peer-focus:text-sm peer-focus:text-neonBlue">
+              Email
+            </label>
+          </div>
 
-        {/* Invisible reCAPTCHA */}
-        <ReCAPTCHA
-          sitekey="6Leym4krAAAAAOJ6uf4lllQufTplgjglCFNeV28t"
-          size="invisible"
-          ref={recaptchaRef}
-        />
+          <div className="relative">
+            <FaCommentDots className="absolute top-4 left-4 text-neonBlue" />
+            <textarea
+              required
+              name="message"
+              rows="5"
+              className="peer w-full pl-12 pr-4 py-4 bg-transparent border-b-2 border-textPrimary/30 focus:border-neonBlue outline-none text-lg transition-all"
+              placeholder=" "
+            ></textarea>
+            <label className="absolute left-12 top-4 text-textPrimary/70 text-lg pointer-events-none transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-lg peer-focus:top-[-10px] peer-focus:text-sm peer-focus:text-neonBlue">
+              Message
+            </label>
+          </div>
 
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          type="submit"
-          className="bg-neonBlue text-bgPrimary font-bold px-8 py-4 rounded-full shadow-neon-blue hover:shadow-neon-violet transition focus:outline-none focus:ring-4 focus:ring-neonViolet focus:ring-opacity-60"
-        >
-          Send Message
-        </motion.button>
-      </form>
-
-      <AnimatePresence>
-        {status && (
-          <motion.div
-            className={`mt-6 px-4 py-2 rounded-md ${
-              status.startsWith('Message sent')
-                ? 'bg-green-600 text-white'
-                : 'bg-red-600 text-white'
-            }`}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.4 }}
+          <motion.button
+            whileHover={{ scale: 1.05, boxShadow: '0 0 20px #00BFFF' }}
+            whileTap={{ scale: 0.95 }}
+            type="submit"
+            disabled={loading}
+            className="w-full text-center bg-neonBlue text-bgPrimary font-bold px-8 py-4 rounded-full shadow-neon-blue hover:shadow-neon-violet transition focus:outline-none focus:ring-4 focus:ring-neonViolet focus:ring-opacity-60"
           >
-            {status}
-          </motion.div>
-        )}
-      </AnimatePresence>
+            {loading ? 'Sending...' : 'Send Message'}
+          </motion.button>
+        </form>
+      </motion.div>
     </section>
   );
 }
