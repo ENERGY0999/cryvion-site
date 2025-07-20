@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import emailjs from 'emailjs-com';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 export default function Contact() {
   const [status, setStatus] = useState('');
+  const recaptchaRef = useRef(null);
 
-  const sendEmail = (e) => {
+  const sendEmail = async (e) => {
     e.preventDefault();
 
     const form = e.target;
@@ -15,6 +17,19 @@ export default function Contact() {
       console.warn('Bot detected!');
       return;
     }
+
+    // Get reCAPTCHA token
+    const token = await recaptchaRef.current.executeAsync();
+    recaptchaRef.current.reset();
+
+    if (!token) {
+      setStatus('Please complete the reCAPTCHA challenge.');
+      return;
+    }
+
+    // Append the token to form data
+    const formData = new FormData(form);
+    formData.append('g-recaptcha-response', token);
 
     emailjs
       .sendForm(
@@ -44,15 +59,17 @@ export default function Contact() {
         Contact Us
       </h2>
 
-      <form onSubmit={sendEmail} className="space-y-6 max-w-lg w-full">
+      <form onSubmit={sendEmail} className="space-y-6 max-w-lg w-full" noValidate>
         {/* Honeypot Field */}
         <div className="hidden">
           <label htmlFor="honeypot">Leave this empty</label>
-          <input type="text" id="honeypot" name="honeypot" />
+          <input type="text" id="honeypot" name="honeypot" autoComplete="off" />
         </div>
 
         <div>
-          <label htmlFor="name" className="block mb-2">Name</label>
+          <label htmlFor="name" className="block mb-2">
+            Name
+          </label>
           <input
             required
             type="text"
@@ -63,7 +80,9 @@ export default function Contact() {
         </div>
 
         <div>
-          <label htmlFor="email" className="block mb-2">Email</label>
+          <label htmlFor="email" className="block mb-2">
+            Email
+          </label>
           <input
             required
             type="email"
@@ -74,7 +93,9 @@ export default function Contact() {
         </div>
 
         <div>
-          <label htmlFor="message" className="block mb-2">Message</label>
+          <label htmlFor="message" className="block mb-2">
+            Message
+          </label>
           <textarea
             required
             name="message"
@@ -83,6 +104,13 @@ export default function Contact() {
             className="w-full px-4 py-3 rounded-lg bg-glassBg border border-glassBorder focus:outline-none focus:ring-2 focus:ring-neonBlue transition"
           ></textarea>
         </div>
+
+        {/* Invisible reCAPTCHA */}
+        <ReCAPTCHA
+          sitekey="6Leym4krAAAAAOJ6uf4lllQufTplgjglCFNeV28t"
+          size="invisible"
+          ref={recaptchaRef}
+        />
 
         <motion.button
           whileHover={{ scale: 1.05 }}
