@@ -1,71 +1,55 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FaEye, FaHeart } from 'react-icons/fa';
+import { FaRocket } from 'react-icons/fa';
 
 export default function About() {
   return (
     <section
       id="about"
-      className="bg-white dark:bg-gray-900 py-20 px-6 sm:px-12 md:px-16 lg:px-24"
-      aria-labelledby="about-title"
+      className="bg-bgPrimary text-textPrimary min-h-screen flex items-center justify-center px-6 sm:px-12 md:px-24"
+      aria-label="About Cryvion"
     >
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center md:items-start gap-12">
-        {/* Left side: Logo */}
-        <motion.div
-          className="flex-shrink-0 w-full md:w-1/2 flex justify-center md:justify-center"
-          initial={{ opacity: 0, x: -40 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <img
-            src="/tech.jpg" // Ensure this image is in the public folder
-            alt="Cryvion logo representing technology and innovation"
-            className="max-w-full h-auto rounded-xl shadow-lg"
-            loading="lazy"
-          />
-        </motion.div>
+      <motion.div
+        className="bg-glassBg backdrop-blur-xs border border-glassBorder rounded-3xl p-12 max-w-6xl mx-auto shadow-neon-violet flex flex-col md:flex-row items-center gap-10"
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8, ease: 'easeOut' }}
+      >
+        {/* Neon vertical accent bar */}
+        <div className="hidden md:block w-1 rounded-full bg-gradient-to-b from-neonBlue to-neonViolet h-48" />
 
-        {/* Right side: About text */}
-        <motion.div
-          className="w-full md:w-1/2 text-center md:text-left flex flex-col justify-center"
-          initial={{ opacity: 0, x: 40 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <h2
-            id="about-title"
-            className="text-4xl font-extrabold text-gray-900 dark:text-white mb-6"
-          >
+        {/* Left text content */}
+        <div className="flex-1 text-left">
+          <h2 className="font-orbitron text-4xl md:text-5xl font-extrabold mb-6 text-neonBlue drop-shadow-neon-blue tracking-wide">
             About Cryvion
           </h2>
 
-          <p className="text-gray-700 dark:text-gray-300 text-lg leading-relaxed max-w-xl mx-auto md:mx-0 mb-10">
-            Cryvion is a future-driven technology company focused on building smart, scalable, and localized digital platforms.
-            Our mission is to launch impactful services that solve real-world problems with simplicity and power.
+          <p className="text-lg md:text-xl leading-relaxed tracking-wide mb-6 text-textPrimary/90">
+            Cryvion is a cutting-edge technology company dedicated to building smart,
+            scalable, and localized online platforms that revolutionize industries.
+            Our mission is to combine innovation and practical solutions to empower
+            businesses and individuals in the digital era.
           </p>
 
-          <div className="flex flex-col md:flex-row gap-8 items-center md:items-start justify-center md:justify-start">
-            <div className="bg-cryvionYellow text-black p-6 rounded-2xl shadow-xl w-72 flex flex-col items-center md:items-start">
-              <FaEye className="text-3xl mb-3" aria-hidden="true" />
-              <h3 className="font-bold text-xl mb-2">Our Vision</h3>
-              <p className="text-sm text-center md:text-left">
-                To empower businesses and communities through powerful digital ecosystems.
-              </p>
-            </div>
-            <div className="bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-white p-6 rounded-2xl shadow-xl w-72 flex flex-col items-center md:items-start">
-              <FaHeart className="text-3xl mb-3" aria-hidden="true" />
-              <h3 className="font-bold text-xl mb-2">Our Values</h3>
-              <p className="text-sm text-center md:text-left">
-                Simplicity, impact, and innovation are at the heart of everything we build.
-              </p>
-            </div>
-          </div>
+          <ul className="list-disc list-inside space-y-3 text-textPrimary/80 text-lg">
+            <li>Innovative digital solutions tailored to your needs</li>
+            <li>Highly scalable platforms that grow with your business</li>
+            <li>Localized services that respect cultural and market differences</li>
+            <li>Commitment to quality, security, and user experience</li>
+          </ul>
+        </div>
+
+        {/* Right icon or image */}
+        <motion.div
+          className="flex-1 flex justify-center md:justify-end"
+          initial={{ opacity: 0, x: 50 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, ease: 'easeOut', delay: 0.3 }}
+        >
+          <FaRocket className="text-neonViolet text-[120px] drop-shadow-neon-violet" aria-hidden="true" />
         </motion.div>
-      </div>
+      </motion.div>
     </section>
   );
 }
-
-

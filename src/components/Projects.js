@@ -3,59 +3,68 @@ import { motion } from 'framer-motion';
 
 const projects = [
   {
-    title: 'SkillDZ.com',
-    description: 'A local freelance services marketplace built for Algeria, inspired by Fiverr and Armut.',
-    link: '#',
-  },
-  {
-    title: 'BotBento.com',
-    description: 'A marketplace of niche AI micro-bots designed to automate specific online tasks efficiently.',
-    link: '#',
+    title: 'SkillDZ',
+    description:
+      'A premium freelance marketplace for Algeria, designed with cutting-edge features and a futuristic UI.',
+    link: 'https://skilldz.com',
   },
   {
     title: 'AutoDM.ai',
-    description: 'A no-code SaaS tool that auto-replies to Instagram DMs for small businesses.',
-    link: '#',
+    description:
+      'An AI-powered Instagram DM auto-responder to boost small business engagement and customer support.',
+    link: 'https://autodm.ai',
+  },
+  {
+    title: 'BotBento',
+    description:
+      'A micro AI bots marketplace with niche use cases, offering easy integration and powerful automation.',
+    link: 'https://botbento.com',
   },
 ];
 
 export default function Projects() {
   return (
-    <section id="projects" className="bg-gray-900 text-white py-20 px-6">
-      <div className="max-w-6xl mx-auto text-center">
-        <motion.h2
-          className="text-4xl md:text-5xl font-bold mb-12"
-          initial={{ opacity: 0, y: -40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          Our Projects
-        </motion.h2>
+    <section
+      id="projects"
+      className="bg-bgPrimary text-textPrimary min-h-screen flex flex-col items-center justify-center px-6 sm:px-12 md:px-24 py-20"
+      aria-label="Our Projects"
+    >
+      <motion.h2
+        className="font-orbitron text-5xl font-extrabold mb-12 text-neonBlue drop-shadow-neon-blue tracking-wide"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8, ease: 'easeOut' }}
+      >
+        Our Projects
+      </motion.h2>
 
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {projects.map((project, index) => (
-            <motion.div
-              key={index}
-              className="bg-gray-800 p-6 rounded-2xl shadow-lg hover:shadow-yellow-500/20 transition"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1, duration: 0.6 }}
-            >
-              <h3 className="text-2xl font-semibold mb-2 text-cryvionYellow">
-                {project.title}
-              </h3>
-              <p className="text-gray-300 mb-4">{project.description}</p>
-              <a
-                href={project.link}
-                className="text-sm font-medium text-cryvionYellow hover:underline"
-              >
-                Learn more →
-              </a>
-            </motion.div>
-          ))}
-        </div>
+      <div className="grid gap-10 grid-cols-1 md:grid-cols-3 max-w-7xl w-full">
+        {projects.map(({ title, description, link }, index) => (
+          <motion.a
+            key={title}
+            href={link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-glassBg backdrop-blur-xs border border-glassBorder rounded-2xl p-8 shadow-neon-violet flex flex-col justify-between hover:shadow-neon-blue transform hover:scale-[1.05] transition duration-300"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 * index, duration: 0.6, ease: 'easeOut' }}
+            aria-label={`View project ${title}`}
+          >
+            <h3 className="text-2xl font-semibold mb-4 text-neonViolet drop-shadow-neon-violet">
+              {title}
+            </h3>
+            <p className="text-textPrimary/90 flex-grow">{description}</p>
+            <span className="mt-6 inline-block text-neonBlue font-bold hover:underline">
+              Visit Project &rarr;
+            </span>
+          </motion.a>
+        ))}
       </div>
     </section>
   );
 }
+
 
