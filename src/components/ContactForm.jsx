@@ -1,31 +1,58 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { send } from '@emailjs/browser';
 
 export default function ContactForm() {
-  const [form, setForm] = useState({ name: '', email: '', message: '' });
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState('');
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  // Replace with your actual Formspree form endpoint URL
+  const formspreeEndpoint = 'https://formspree.io/f/xeozvdwd';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setFeedback('');
 
+    const formData = new FormData(e.target);
+
     try {
-      await send(
-        'service_y7oqpj6', // from emailjs dashboard
-        'template_g82st2k', // your email template id
-        form,
-        'T_VtCzyoxOW3PJseS'  // from emailjs dashboard
-      );
-      setFeedback('Message sent successfully!');
-      setForm({ name: '', email: '', message: '' });
+      const response = await fetch(formspreeEndpoint, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+
+      const text = await response.text();
+
+      // Try to parse JSON, or fallback to raw text
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        data = null;
+      }
+
+      console.log('Formspree response status:', response.status);
+      console.log('Formspree response text:', text);
+      console.log('Parsed response data:', data);
+
+      if (response.ok) {
+        setFeedback('Message sent successfully!');
+        e.target.reset();
+      } else if (data && data.errors) {
+        setFeedback(data.errors.map((err) => err.message).join(', '));
+      } else if (data && data.message) {
+        setFeedback(data.message);
+      } else {
+        setFeedback(`Failed to send message. Status: ${response.status}`);
+      }
     } catch (error) {
-      setFeedback('Failed to send message. Please try again later.');
+      console.error('Submit error:', error);
+      setFeedback(`Error: ${error.message || error.toString()}`);
     }
+
     setLoading(false);
   };
 
@@ -39,12 +66,13 @@ export default function ContactForm() {
         Contact Us
       </h2>
 
-      <form onSubmit={handleSubmit} className="max-w-lg mx-auto bg-glassBg backdrop-blur-xs border border-glassBorder rounded-3xl p-8 shadow-neon-violet flex flex-col gap-6">
+      <form
+        onSubmit={handleSubmit}
+        className="max-w-lg mx-auto bg-glassBg backdrop-blur-xs border border-glassBorder rounded-3xl p-8 shadow-neon-violet flex flex-col gap-6"
+      >
         <motion.input
           type="text"
           name="name"
-          value={form.name}
-          onChange={handleChange}
           placeholder="Your Name"
           required
           className="p-4 rounded-md bg-transparent border border-neonBlue text-textPrimary focus:outline-none focus:ring-2 focus:ring-neonViolet"
@@ -54,8 +82,6 @@ export default function ContactForm() {
         <motion.input
           type="email"
           name="email"
-          value={form.email}
-          onChange={handleChange}
           placeholder="Your Email"
           required
           className="p-4 rounded-md bg-transparent border border-neonBlue text-textPrimary focus:outline-none focus:ring-2 focus:ring-neonViolet"
@@ -64,8 +90,6 @@ export default function ContactForm() {
 
         <motion.textarea
           name="message"
-          value={form.message}
-          onChange={handleChange}
           placeholder="Your Message"
           rows="5"
           required

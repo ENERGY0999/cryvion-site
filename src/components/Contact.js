@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import emailjs from 'emailjs-com';
+import { motion } from 'framer-motion';
 import { toast, Toaster } from 'react-hot-toast';
 import { FaUser, FaEnvelope, FaCommentDots } from 'react-icons/fa';
 
 export default function Contact() {
   const [loading, setLoading] = useState(false);
 
-  const sendEmail = (e) => {
+  // Replace with your actual Formspree endpoint URL
+  const formspreeEndpoint = 'https://formspree.io/f/xeozvdwd';
+
+  const sendEmail = async (e) => {
     e.preventDefault();
     const form = e.target;
     const honeypot = form.honeypot.value;
@@ -19,23 +21,35 @@ export default function Contact() {
 
     setLoading(true);
 
-    emailjs
-      .sendForm(
-        'YOUR_SERVICE_ID',
-        'YOUR_TEMPLATE_ID',
-        form,
-        'YOUR_PUBLIC_KEY'
-      )
-      .then(() => {
+    const formData = new FormData(form);
+
+    try {
+      const response = await fetch(formspreeEndpoint, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+
+      if (response.ok) {
         toast.success('Message sent! I will get back to you soon.');
         form.reset();
-      })
-      .catch(() => {
-        toast.error('Something went wrong. Please try again.');
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+      } else {
+        const data = await response.json();
+        if (data.errors) {
+          toast.error(data.errors.map(err => err.message).join(', '));
+        } else if (data.message) {
+          toast.error(data.message);
+        } else {
+          toast.error('Something went wrong. Please try again.');
+        }
+      }
+    } catch (error) {
+      toast.error(`Error: ${error.message || error.toString()}`);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
